@@ -1,0 +1,7 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+# naměřená data se do repa nedávají
+*.csv
+!tests/data/*.csv
