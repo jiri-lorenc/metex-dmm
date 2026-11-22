@@ -15,7 +15,63 @@ displeji, bargraf 0–20, statistika, záznam a graf s mezemi.*
 |---|---|
 | ![Metex M-3650D v kufříku](docs/foto/pristroj-v-kufru.webp) | ![AXAGON ADS-1PQN s kabelem Metexu](docs/foto/prevodnik-zapojeny.webp) |
 
-## Co aplikace umí
+## Historie přístroje
+
+Metex M-3650D je ruční multimetr řady **M-3600D** od korejské firmy METEX
+Corporation. Tato řada se objevila v polovině 90. let. Přístroj má
+3½místný displej (2000 bodů) a vedlejší displej pro frekvenci, odtud nápis
+„Dual Display“. Dál má bargraf, rozsahy napětí, proudu do 20 A, odporu,
+kapacity a frekvence, měření hFE, test diod a logickou sondu. Má také
+**rozhraní RS-232**, na tehdejší ruční multimetr nevšední výbavu.
+U nás se prodával s českým návodem a v zahraničí také jako Voltcraft
+M-3650D.
+
+Náš kus je z roku 1999 a zdědili jsme ho po dědečkovi. Dodnes je kompletní:
+kufřík, měřicí šňůry, kabel RS-232, český návod i původní disketa
+s programem. A pořád měří.
+
+Podrobnosti o přístroji jsou v [docs/pristroj.md](docs/pristroj.md).
+
+## Motivace
+
+Přístroj, který umí posílat data do počítače, by neměl skončit v šuplíku jen
+proto, že jeho software potřebuje MS-DOS, grafiku VGA a 5¼" disketovou
+mechaniku. Chtěli jsme mu dát nový život:
+
+- vidět měření na velkém displeji v PC, „1:1“ jako na přístroji;
+- mít živý graf, statistiku a zápis do CSV, třeba pro dlouhodobé měření
+  odběru zařízení na baterii nebo průběhu nabíjení;
+- využít to, co přístroj umí od roku 1995, s dnešním počítačem
+  s Windows 11 a převodníkem USB–RS-232;
+- sepsat, jak rozhraní funguje, protože informace o něm jsou rozházené
+  po starých návodech a zdrojích open-source projektů.
+
+## Původní software
+
+![Původní disketa Metex M-2HD](docs/foto/disketa-m2hd.webp)
+
+K přístroji se dodávala 5¼" disketa **METEX M-2HD „DMM Software with
+Computer Interface“**. Na štítku je razítko kontroly kvality z 17. 7. 1995.
+Obsahuje program **`METEX.EXE`** pro MS-DOS:
+
+- spouští se z příkazové řádky, menu se otevírá klávesou F10;
+- v nastavení (SETUP) se volí typ přístroje **„M36D“**;
+- naměřená data ukládá do vlastních souborů s příponou **`.3UT`**;
+- vyžaduje grafickou kartu a monitor **VGA**;
+- výrobce ho označoval za ukázkový program bez záruky.
+
+Na dnešním počítači se takový program provozuje jen obtížně. Chybí
+mechanika na 5¼" diskety, DOS nemá přímý přístup k portu COM přes USB
+a formát `.3UT` nic jiného nepřečte. Víc v
+[docs/navod-komunikace.md](docs/navod-komunikace.md).
+
+## Nové řešení
+
+Tato aplikace původní program nahrazuje. Běží na Windows 10/11, čte
+přístroj přes libovolný převodník USB–RS-232 s plnohodnotnými signály
+a ukládá data do běžného CSV.
+
+### Co aplikace umí
 
 - **Displej jako na přístroji.** Ukazuje hodnotu, jednotku a režim (DC, AC,
   Ω, FREQ, CAP, hFE, dioda, logika). Rozsah odhaduje z formátu čísla.
@@ -54,19 +110,63 @@ Aplikace nic nenastavuje a nic nevynucuje. **Rozsah se přepíná jen ručně
 otočným přepínačem.** V proudových rozsazích přepnutí přeruší měřený obvod.
 Aplikace na to upozorní červeným pruhem, kdykoli měříte proud.
 
+### Proč Python + PySide6 (Qt) + pyqtgraph
+
+- **pyserial** je osvědčená knihovna pro sériové porty. Umí přesně to, co
+  Metex potřebuje: 7 datových bitů, 2 stop bity a ruční ovládání DTR/RTS
+  pro napájení rozhraní.
+- **Nativní okno místo webového UI.** Webové UI s lokálním serverem by
+  přidalo další vrstvu, tedy server, port a prohlížeč, a víc míst, kde se
+  může něco pokazit. Okno Qt je jeden proces, který se spustí dvojklikem.
+  Sériový port drží jen on a po zavření ho spolehlivě uvolní.
+- **pyqtgraph** kreslí graf s desetitisíci body plynule, umí časovou osu,
+  předpony SI a zoom myší. Matplotlib by byl na živá data pomalý.
+- **Python** je čitelný i pro ty, kdo chtějí protokol jen pochopit nebo
+  upravit. Jádro (`protocol`, `link`, `stats`, `csvlog`) na Qt nezávisí,
+  takže ho sdílí GUI, řádkový logger i testy a dá se použít i v jiném
+  projektu.
+
+## Co je potřeba, aby to fungovalo
+
+### Hardware
+
+1. **Multimetr Metex M-3650D.** Pravděpodobně půjdou i další přístroje se
+   stejným 14znakovým protokolem, např. M-3610D, M-3630D, M-3640D a
+   Voltcraft M-3650D. Ověřený je ale jen M-3650D.
+2. **Originální kabel MT/RS232C.** Na straně přístroje má pětikolíkovou
+   vidlici do boku, na straně PC konektor DB9 samice. Zapojení pinů je
+   v [docs/zapojeni.md](docs/zapojeni.md), kdybyste si ho chtěli vyrobit.
+3. **Převodník USB–RS-232 s plnohodnotným rozhraním**, tedy DB9 samec,
+   úrovně RS-232 a hlavně vyvedené signály **DTR a RTS**. Rozhraní
+   přístroje je oddělené optočlenem a napájí se právě z DTR (+) a RTS (−).
+   Ověřený je **AXAGON ADS-1PQN** s čipem FTDI FT232R; kabel Metexu se na
+   něj nasune přímo, bez redukce. Stejně poslouží i počítač se starým
+   portem COM.
+
+> **Nefungují** levné TTL převodníky se čtyřmi vodiči (5V, GND, TX, RX),
+> např. moduly s PL2303. Nemají DTR ani RTS, takže rozhraní přístroje nemá
+> napájení. Navíc mají opačnou polaritu signálu než RS-232. Vyzkoušeno.
+
+### Ovladač
+
+Převodníky s čipem FTDI mají ve Windows 10/11 ovladač z Windows Update.
+Po zapojení se objeví ve Správci zařízení jako „USB Serial Port (COMx)“.
+U jiných čipů nainstalujte ovladač výrobce. Staré čipy PL2303 (VID:PID
+067B:2303) už Windows 11 nepodporuje.
+
+### Software
+
+- **Windows 10/11** (jádro a řádkový logger by měly běžet i na Linuxu,
+  ověřené to není).
+- **Python 3.11 nebo novější** z
+  [python.org](https://www.python.org/downloads/). Při instalaci zaškrtněte
+  „Add python.exe to PATH“.
+- Knihovny z `requirements.txt`: **pyserial**, **PySide6-Essentials** (Qt),
+  **pyqtgraph** a **numpy**. Nainstaluje je `Metex.bat` sám.
+
 ## Instalace
 
-Potřebujete:
-
-1. **Windows 10/11** a **Python 3.11 nebo novější** z
-   [python.org](https://www.python.org/downloads/). Při instalaci zaškrtněte
-   „Add python.exe to PATH“.
-2. **Převodník USB–RS-232 s plnohodnotným rozhraním**, který má vyvedené
-   DTR a RTS. Ověřený je **AXAGON ADS-1PQN** (čip FTDI FT232R, VID:PID
-   0403:6001). Ovladač FTDI se ve Windows 11 nainstaluje sám a převodník se
-   objeví jako `COMx`. Podrobnosti najdete v [docs/zapojeni.md](docs/zapojeni.md).
-
-Pak stačí dvakrát kliknout na **`Metex.bat`**. Při prvním spuštění vytvoří
+Stačí dvakrát kliknout na **`Metex.bat`**. Při prvním spuštění vytvoří
 složku `.venv` a nainstaluje knihovny (asi 1–2 minuty, je potřeba internet).
 Potom už rovnou spouští aplikaci.
 
@@ -164,21 +264,6 @@ Přepínače `--poll` a `--listen` vynutí pasivní nebo aktivní režim.
 `--window` nastaví klouzavé okno a `--report` určuje, jak často se vypisuje
 souhrn.
 
-## Proč Python + PySide6 (Qt) + pyqtgraph
-
-- **pyserial** je osvědčená knihovna pro sériové porty. Umí přesně to, co
-  Metex potřebuje: 7 datových bitů, 2 stop bity a ruční ovládání DTR/RTS
-  pro napájení rozhraní.
-- **Nativní okno místo webového UI.** Webové UI s lokálním serverem by
-  přidalo další vrstvu, tedy server, port a prohlížeč, a víc míst, kde se
-  může něco pokazit. Okno Qt je jeden proces, který se spustí dvojklikem.
-  Sériový port drží jen on a po zavření ho spolehlivě uvolní.
-- **pyqtgraph** kreslí graf s desetitisíci body plynule, umí časovou osu,
-  předpony SI a zoom myší. Matplotlib by byl na živá data pomalý.
-- **Python 3.11 a pyserial** už na PC byly. Jádro (`protocol`, `link`,
-  `stats`, `csvlog`) na Qt nezávisí, takže ho sdílí GUI, řádkový logger
-  i testy.
-
 ## Testy
 
 ```powershell
@@ -222,3 +307,20 @@ docs/                  dokumentace přístroje, protokolu a zapojení, fotky
   a uvádí ověřené zdroje (návod, sigrok, QtDMM).
 - [docs/navod-komunikace.md](docs/navod-komunikace.md) shrnuje vlastními
   slovy kapitoly 6-12 a 6-13 návodu a popisuje původní disketu.
+
+## Zdroje a poděkování
+
+Protokol jsme ověřili podle návodu k přístroji a podle dvou open-source
+projektů, které podporu přístrojů Metex udržují léta:
+
+- [sigrok / libsigrok](https://sigrok.org/): driver `metex14`, wiki
+  s popisem kabelu;
+- [QtDMM](https://github.com/qtdmm/QtDMM): seznam podporovaných přístrojů
+  a testovací rámce.
+
+Tento projekt s výrobcem METEX Corporation ani s prodejci přístroje nijak
+nesouvisí. Názvy výrobků patří jejich vlastníkům.
+
+## Licence
+
+Zatím neurčena.
