@@ -30,7 +30,7 @@ def test_passive_polling_sends_only_D():
 
     def factory(port):
         m = SimulatedMeter(seed=1)
-        m.REPLY_DELAY = 0.02
+        m.REPLY_DELAY = 0.15
         meters.append(m)
         return m
 
@@ -87,7 +87,7 @@ class Flaky:
     def __init__(self):
         Flaky.opened += 1
         self.inner = SimulatedMeter(seed=4)
-        self.inner.REPLY_DELAY = 0.02
+        self.inner.REPLY_DELAY = 0.15
         self.reads = 0
 
     @property
@@ -171,7 +171,7 @@ def test_ui_callback_exception_does_not_kill_link():
         raise RuntimeError("chyba v UI")
 
     m = SimulatedMeter(seed=5)
-    m.REPLY_DELAY = 0.02
+    m.REPLY_DELAY = 0.15
     link = MetexLink("TEST", PollMode.POLL, on_reading=boom,
                      serial_factory=lambda p: m)
     link.start()
@@ -180,3 +180,36 @@ def test_ui_callback_exception_does_not_kill_link():
         assert link.running
     finally:
         link.stop()
+
+
+def test_auto_active_mode_found_after_switch_while_polling():
+    """Uživatel stiskne FUNCTION (COM) až během dotazování: přístroj na 'D'
+    přestane odpovídat a vysílá sám. AUTO to musí poznat a přestat se ptát."""
+    m = SimulatedMeter(seed=6)
+    m.REPLY_DELAY = 0.15
+    link, readings, _ = run_link(lambda p: m, PollMode.AUTO)
+    link.PROBE_LEN = 0.3
+    try:
+        assert wait_for(lambda: any(r.solicited for r in readings), 4)
+        m.REPLY_DELAY = 1e9        # na dotaz už neodpovídá
+        m.active = True            # …ale vysílá sám
+        assert wait_for(lambda: link.stats.active_mode, 8)
+        sent = len(m.written)
+        time.sleep(1.5)
+        assert len(m.written) == sent
+    finally:
+        link.stop()
+
+
+def test_early_frame_is_not_taken_as_reply():
+    """Rámec hotový dřív než za 117 ms po dotazu je samovolný (aktivní režim)."""
+    m = SimulatedMeter(active=True, seed=7)
+    m.REPLY_DELAY = 1e9
+    link, readings, _ = run_link(lambda p: m, PollMode.POLL)
+    try:
+        assert wait_for(lambda: len(readings) >= 2, 5)
+    finally:
+        link.stop()
+    # v režimu POLL se ptá dál, ale žádný rámec nesmí být brán jako odpověď
+    # dřív než MIN_REPLY po dotazu
+    assert link.stats.frames_ok >= 2

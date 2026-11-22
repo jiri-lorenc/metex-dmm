@@ -60,6 +60,11 @@ class MetexLink:
     NO_DATA_AFTER = 3.0     # s ticha -> stav NO_DATA
     PROBE_LEN = 1.5         # s naslouchání bez dotazu (AUTO)
     PROBE_EVERY = 60.0      # s mezi nasloucháními (AUTO)
+    # Odpověď na 'D' nemůže dorazit dřív, než se odvysílá: 14 znaků × 10 bitů
+    # při 1200 Bd = 117 ms. Rámec hotový dřív musel začít před dotazem, tedy
+    # ho přístroj poslal sám (aktivní režim).
+    MIN_REPLY = 0.11
+    PROBE_AFTER_TIMEOUTS = 2  # tolik dotazů bez odpovědi za sebou -> naslouchat
 
     def __init__(self, port: str, poll_mode: PollMode = PollMode.AUTO,
                  poll_interval: float = 0.0,
@@ -150,6 +155,7 @@ class MetexLink:
         next_poll = 0.0
         opened = time.monotonic()
         last_unsolicited = -1e9
+        missed = 0
         # AUTO: na začátku a pak jednou za PROBE_EVERY chvíli jen posloucháme;
         # rámec, který přijde bez dotazu, znamená aktivní režim (COM).
         probe_until = opened + self.PROBE_LEN
@@ -160,11 +166,14 @@ class MetexLink:
             now = time.monotonic()
             if st.active_mode and now - last_unsolicited > self.ACTIVE_SILENCE:
                 st.active_mode = False          # přístroj přestal vysílat sám
+            auto = self.poll_mode == PollMode.AUTO
             if outstanding and now - req_t > self.REPLY_TIMEOUT:
                 outstanding = False
                 st.timeouts += 1
-                splitter.clear()
-            auto = self.poll_mode == PollMode.AUTO
+                missed += 1
+                if auto and missed >= self.PROBE_AFTER_TIMEOUTS:
+                    next_probe = now      # neodpovídá: zkusit jen poslouchat
+                    missed = 0
             if (auto and not st.active_mode and not outstanding
                     and now >= next_probe):
                 probe_until = now + self.PROBE_LEN
@@ -191,8 +200,9 @@ class MetexLink:
                         continue
                     r.t_mono = now
                     r.t_wall = time.time()
-                    if outstanding:
+                    if outstanding and now - req_t >= self.MIN_REPLY:
                         outstanding = False
+                        missed = 0
                         r.solicited = True
                         next_poll = now + self.poll_interval
                     else:
@@ -209,7 +219,7 @@ class MetexLink:
                         pass
             last = st.last_rx_mono if st.last_rx_mono > opened else opened
             if now - last > self.NO_DATA_AFTER and self.state != LinkState.NO_DATA:
-                self._set_state(LinkState.NO_DATA, "přístroj neodpovídá")
+                self._set_state(LinkState.NO_DATA)
 
 
 def open_serial(port: str):

@@ -97,7 +97,7 @@ def apply_dark_palette(app: QApplication) -> None:
 
 
 class MainWindow(QMainWindow):
-    def __init__(self, demo: bool = False) -> None:
+    def __init__(self, demo: bool = False, port: str | None = None) -> None:
         super().__init__()
         self.setWindowTitle(f"{APP} – měření v počítači")
         self.settings = QSettings("metex-dmm", "metex-dmm")
@@ -124,7 +124,7 @@ class MainWindow(QMainWindow):
         self.alarm_events = 0
         self.dirty = False
         self._build_ui()
-        self._load_settings(demo)
+        self._load_settings(demo, port)
         self.timer = QTimer(self, interval=250, timeout=self._tick)
         self.timer.start()
         self.blink_timer = QTimer(self, interval=400, timeout=self._blink)
@@ -320,6 +320,7 @@ class MainWindow(QMainWindow):
         self._kv(g, r + 1, 0, "Vzorků za sekundu")
         self.lbl_rate = self._val(g, r + 1, 1)
         b = QPushButton("Vynulovat statistiku a graf")
+        b.setMinimumHeight(30)
         b.setToolTip("Začne novou řadu měření. Probíhající záznam do CSV "
                      "pokračuje beze změny.")
         b.clicked.connect(lambda: self.new_series("vynulováno uživatelem"))
@@ -378,10 +379,10 @@ class MainWindow(QMainWindow):
         return box
 
     # ======================================================== nastavení
-    def _load_settings(self, demo: bool) -> None:
+    def _load_settings(self, demo: bool, port: str | None = None) -> None:
         s = self.settings
         self.refresh_ports()
-        want = SIM_PORT if demo else s.value("port", "")
+        want = SIM_PORT if demo else (port or s.value("port", ""))
         i = self.cb_port.findData(want)
         if i >= 0:
             self.cb_port.setCurrentIndex(i)
@@ -815,6 +816,7 @@ def main(argv: list[str] | None = None) -> int:
     app = QApplication(argv)
     app.setApplicationName("Metex M-3650D")
     apply_dark_palette(app)
-    w = MainWindow(demo="--demo" in argv)
+    port = argv[argv.index("--port") + 1] if "--port" in argv[:-1] else None
+    w = MainWindow(demo="--demo" in argv, port=port)
     w.show()
     return app.exec()

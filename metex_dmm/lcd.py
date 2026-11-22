@@ -140,6 +140,8 @@ class LcdPanel(QWidget):
         # horní řádek symbolů
         top = QRectF(X + LW * 0.03, Y + LH * 0.02, LW * 0.94, LH * 0.13)
         syms = []
+        if not self.connected and self.value_text != "----":
+            syms.append("ŽÁDNÁ DATA – poslední hodnota")
         if self.com_active:
             syms.append("COM")
         if self.rec:
@@ -148,10 +150,11 @@ class LcdPanel(QWidget):
             syms.append("ALARM " + self.alarm)
         x = top.x()
         for sym in syms:
-            col = REC if sym in ("REC",) or sym.startswith("ALARM") else ACCENT
+            col = (REC if sym == "REC" or sym.startswith(("ALARM", "ŽÁDNÁ"))
+                   else ACCENT)
             self._text(p, QRectF(x, top.y(), top.width(), top.height()), sym,
                        min(LH * 0.075, 20), color=col)
-            x += (len(sym) + 2) * min(LH * 0.06, 16)
+            x += p.fontMetrics().horizontalAdvance(sym + "    ")
         self._text(p, top, self.mode_desc, min(LH * 0.07, 20),
                    Qt.AlignRight | Qt.AlignVCenter, bold=False, color=DIM)
 
