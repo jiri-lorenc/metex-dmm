@@ -162,7 +162,7 @@ class MainWindow(QMainWindow):
         for label, s in INTERVALS:
             self.cb_interval.addItem(label, s)
         self.cb_interval.setToolTip("Nejkratší odstup dotazů v pasivním režimu.\n"
-                                    "V aktivním režimu určuje tempo přístroj (~1/s).")
+                                    "V aktivním režimu (COM) určuje tempo přístroj (~2,5/s).")
         self.cb_interval.currentIndexChanged.connect(self._apply_link_options)
         conn.addWidget(self.cb_interval)
         conn.addSpacing(10)

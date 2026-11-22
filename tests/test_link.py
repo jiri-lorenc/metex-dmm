@@ -213,3 +213,26 @@ def test_early_frame_is_not_taken_as_reply():
     # v režimu POLL se ptá dál, ale žádný rámec nesmí být brán jako odpověď
     # dřív než MIN_REPLY po dotazu
     assert link.stats.frames_ok >= 2
+
+
+def test_auto_detects_real_com_behaviour():
+    """Skutečné chování M-3650D v COM (ověřeno 22. 11. 2026): vysílá ~2,5×/s
+    a zároveň dál odpovídá na 'D'. AUTO to musí poznat a přestat se ptát."""
+    m = SimulatedMeter(seed=8)
+    m.REPLY_DELAY = 0.25
+    link, readings, _ = run_link(lambda p: m, PollMode.AUTO)
+    link.PROBE_EVERY = 2.0
+    try:
+        assert wait_for(lambda: len(readings) >= 3, 5)
+        assert not link.stats.active_mode
+        m.active = True                    # uživatel stiskl FUNCTION -> COM
+        assert wait_for(lambda: link.stats.active_mode, 8)
+        sent = len(m.written)
+        time.sleep(1.5)
+        assert len(m.written) == sent      # v COM se už neptá
+        n = len(readings)
+        m.active = False                   # otočení přepínačem -> pasivní
+        assert wait_for(lambda: not link.stats.active_mode, 5)
+        assert wait_for(lambda: len(m.written) > sent and len(readings) > n + 2, 5)
+    finally:
+        link.stop()

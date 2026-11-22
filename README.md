@@ -207,7 +207,7 @@ Aplikace si port pamatuje a příště se připojí sama.
 |---|---|
 | **Port / Obnovit** | Výběr COM portu. Převodníky FTDI, Prolific a CH340 jsou v seznamu nahoře. |
 | **Komunikace** | *Automaticky* (doporučeno): ptá se `D` a pozná, kdy přístroj vysílá sám. *Pasivní*: vždy se ptá `D`. *Aktivní*: nic neposílá, jen poslouchá. |
-| **Vzorkování** | Nejkratší odstup dotazů. „Co nejrychleji“ dává asi 2,8–3 vzorky/s. Pro dlouhé záznamy stačí 1–10 s. V aktivním režimu určuje tempo přístroj (asi 1/s). |
+| **Vzorkování** | Nejkratší odstup dotazů. „Co nejrychleji“ dává asi 2,8–3 vzorky/s. Pro dlouhé záznamy stačí 1–10 s. V aktivním režimu určuje tempo přístroj (u M-3650D asi 2,5/s). |
 | **Připojit / Odpojit** | Spustí nebo zastaví komunikaci. Vedle je barevný stav linky. |
 | **Statistika – okno** | Délka klouzavého okna. Klouzavý průměr se ukazuje i na vedlejším displeji. |
 | **Vynulovat statistiku a graf** | Začne novou řadu. Probíhající záznam do CSV běží dál. |
@@ -219,10 +219,14 @@ Aplikace si port pamatuje a příště se připojí sama.
 
 Po zapnutí a po každém otočení přepínačem je přístroj v **pasivním** režimu.
 Odpovídá jen na dotaz `D`. Tlačítkem **FUNCTION** se přepne do **aktivního**
-režimu: na displeji svítí **COM** a přístroj sám vysílá asi 1× za sekundu.
-V režimu *Automaticky* aplikace zvládne oba případy. Po připojení a pak
-jednou za minutu chvíli jen poslouchá. Přijdou-li data bez dotazu, přestane
-se ptát. Když samovolné vysílání ustane, začne se ptát znovu.
+režimu: na displeji svítí **COM** a přístroj sám vysílá. Návod uvádí asi
+1× za sekundu, náš M-3650D ale vysílá asi 2,5× za sekundu a přitom dál
+odpovídá i na dotaz `D`.
+V režimu *Automaticky* aplikace zvládne oba případy. Po připojení 1,5 s
+a pak jednou za 20 s na 0,8 s přestane posílat dotazy a jen poslouchá.
+Přijdou-li data i bez dotazu, přístroj vysílá sám: rozsvítí se COM
+a aplikace se přestane ptát, aby nevznikaly zdvojené hodnoty. Když
+samovolné vysílání ustane (po otočení přepínačem), začne se ptát znovu.
 
 ### Formát CSV
 

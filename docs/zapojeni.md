@@ -90,4 +90,4 @@ nebo CH340 a budičem MAX3232.
 | „port nedostupný“ | Port drží jiný program (terminál, QtDMM, sigrok). Zavřete ho. |
 | „přístroj neodpovídá“ | Multimetr je zapnutý? Kabel je zasunutý v boku až na doraz? Převodník má úplné RS-232 s DTR a RTS? Je vybraný správný COM? |
 | přichází jen samé chybné rámce | Jiná rychlost nebo formát. Aplikace používá pevně 1200 Bd 7N2, jiný program mohl port přestavit. Odpojte a připojte. |
-| hodnoty chodí jen 1× za sekundu | Přístroj je v aktivním režimu (COM). To je v pořádku. Jinak tlačítkem FUNCTION nebo otočením přepínače se vrátí do pasivního. |
+| na displeji aplikace svítí COM | Přístroj je v aktivním režimu a vysílá sám. To je v pořádku. Do pasivního režimu se vrátí otočením přepínače nebo tlačítkem FUNCTION. |

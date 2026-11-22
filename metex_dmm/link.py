@@ -6,9 +6,9 @@ Zásady:
 * Výpadky nevadí: neplatné rámce se počítají a zahazují, ticho na lince se
   hlásí, odpojení převodníku (USB) vede k zavření portu a opakovaným pokusům
   o znovuotevření, dokud se port neobjeví.
-* Režim AUTO po otevření portu a pak jednou za minutu 1,5 s jen poslouchá.
-  Přijde-li v té chvíli rámec bez dotazu, přístroj je v aktivním režimu
-  (symbol COM, vysílá sám ~1×/s) a software se přestane ptát. Když samovolné
+* Režim AUTO po otevření portu 1,5 s a pak jednou za 20 s na 0,8 s jen
+  poslouchá. Přijde-li v té chvíli rámec bez dotazu, přístroj je v aktivním
+  režimu (symbol COM, vysílá sám ~2,5×/s) a software se přestane ptát. Když samovolné
   vysílání ustane (po otočení přepínačem se přístroj vrací do pasivního
   režimu), začne se zase ptát.
 
@@ -58,8 +58,13 @@ class MetexLink:
     REOPEN_DELAY = 2.0      # s mezi pokusy o otevření portu
     ACTIVE_SILENCE = 2.5    # s bez samovolných rámců -> zpět do pasivního
     NO_DATA_AFTER = 3.0     # s ticha -> stav NO_DATA
-    PROBE_LEN = 1.5         # s naslouchání bez dotazu (AUTO)
-    PROBE_EVERY = 60.0      # s mezi nasloucháními (AUTO)
+    # AUTO: jednou za PROBE_EVERY se na PROBE_LEN přestane ptát a jen poslouchá.
+    # Ověřeno s M-3650D: v aktivním režimu (COM) vysílá ~2,5×/s (mezery 0,4
+    # a 0,6 s) a NA 'D' DÁL ODPOVÍDÁ, takže ho podle chybějících odpovědí poznat
+    # nejde – jen podle rámců, které přijdou, když se neptáme.
+    PROBE_LEN = 0.8
+    PROBE_FIRST = 1.5       # po otevření portu poslouchat déle
+    PROBE_EVERY = 20.0
     # Odpověď na 'D' nemůže dorazit dřív, než se odvysílá: 14 znaků × 10 bitů
     # při 1200 Bd = 117 ms. Rámec hotový dřív musel začít před dotazem, tedy
     # ho přístroj poslal sám (aktivní režim).
@@ -158,7 +163,7 @@ class MetexLink:
         missed = 0
         # AUTO: na začátku a pak jednou za PROBE_EVERY chvíli jen posloucháme;
         # rámec, který přijde bez dotazu, znamená aktivní režim (COM).
-        probe_until = opened + self.PROBE_LEN
+        probe_until = opened + self.PROBE_FIRST
         next_probe = probe_until + self.PROBE_EVERY
         st.active_mode = False
         self._set_state(LinkState.NO_DATA, f"{self.port} otevřen, čekám na data")

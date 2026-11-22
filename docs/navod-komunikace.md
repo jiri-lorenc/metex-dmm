@@ -15,7 +15,7 @@ multimetr s dvojitým displejem, řada M-3600D“. Fotky originálních stran:
   M-3850.)
 - **Dva režimy:**
   - **Aktivní** – na displeji svítí **COM** a zapíná se tlačítkem
-    **FUNCTION**. Přístroj sám posílá zprávy zhruba jednou za sekundu,
+    **FUNCTION**. Přístroj sám posílá zprávy, podle návodu zhruba jednou za sekundu,
     i když počítač nic nepřijímá nebo vůbec není připojený.
   - **Pasivní** – komunikaci řídí počítač. Každou zprávu přístroj pošle
     jen jako odpověď na jeden povel. Povel pro odeslání právě naměřené

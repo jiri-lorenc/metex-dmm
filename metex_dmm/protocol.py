@@ -2,7 +2,7 @@
 
 Linka: 1200 Bd, 7 datových bitů, bez parity, 2 stop bity. DTR=1 a RTS=0
 napájejí optočlen v kabelu MT/RS232C. Na dotaz ASCII ``D`` (pasivní režim)
-nebo samovolně zhruba 1× za sekundu (aktivní režim, na displeji „COM“)
+nebo samovolně (aktivní režim, na displeji „COM“; ověřeno ~2,5×/s)
 přístroj pošle 14 znaků ASCII::
 
     znak (od 1)  1-2    3-9                 10-13      14

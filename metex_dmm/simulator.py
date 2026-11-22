@@ -1,7 +1,8 @@
 """Simulátor přístroje pro vyzkoušení aplikace bez hardwaru.
 
 Chová se jako otevřený sériový port: na bajt ``D`` po zhruba 0,3 s vrátí
-14bajtový rámec. Volitelně vysílá sám (aktivní režim, ~1× za sekundu).
+14bajtový rámec. Volitelně vysílá sám jako skutečný M-3650D v režimu COM:
+~2,5× za sekundu (mezery 0,4 a 0,6 s) a přitom dál odpovídá i na ``D``.
 Hodnota: pomalu se měnící stejnosměrné napětí kolem 12 V na rozsahu 20 V,
 občas krátké přetížení (O.L), aby bylo vidět, jak s ním aplikace zachází.
 """
@@ -25,7 +26,8 @@ class SimulatedMeter:
         self.rng = random.Random(seed)
         self.t0 = time.monotonic()
         self._pending: list[tuple[float, bytes]] = []
-        self._next_active = self.t0 + 1.0
+        self._next_active = self.t0 + 0.4
+        self._gap = 0.4
         self.is_open = True
         self.written = bytearray()
 
@@ -67,7 +69,8 @@ class SimulatedMeter:
         now = time.monotonic()
         if self.active and now >= self._next_active:
             self._pending.append((now, self.frame()))
-            self._next_active = now + 1.0
+            self._gap = 1.0 - self._gap          # 0,4 / 0,6 s
+            self._next_active = now + self._gap
 
     def frame(self) -> bytes:
         t = time.monotonic() - self.t0

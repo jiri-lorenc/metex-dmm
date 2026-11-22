@@ -20,8 +20,16 @@ Zdroje: návod str. 37, libsigrok `"1200/7n2/rts=0/dtr=1"`, QtDMM
 - **Pasivní** (výchozí po zapnutí a po každém otočení přepínačem): přístroj
   pošle jednu zprávu jako odpověď na příkaz **`D`** (ASCII 0x44, velké D).
 - **Aktivní** (zapíná se tlačítkem FUNCTION, na displeji svítí **COM**):
-  přístroj sám vysílá zhruba 1× za sekundu bez ohledu na to, zda je PC
-  připojené.
+  přístroj sám vysílá bez ohledu na to, zda je PC připojené. Návod uvádí
+  zhruba 1× za sekundu.
+
+**Ověřeno s naším M-3650D (22. 11. 2026):** v režimu COM přístroj vysílá
+asi **2,5× za sekundu**, s mezerami střídavě 0,4 a 0,6 s, tedy každé
+změřené číslo. **Na dotaz `D` přitom dál odpovídá**: odpověď přijde
+220–375 ms po dotazu, navíc k samovolným zprávám. Aktivní režim proto nejde
+poznat podle chybějících odpovědí, jen podle rámců, které přijdou, když se
+software neptá. Aplikace v automatickém režimu po připojení 1,5 s a pak
+každých 20 s na 0,8 s jen poslouchá.
 
 Podle wiki sigrok (stránka Multimeter ICs) přístroj odpoví nejspíš na
 jakýkoli znak. Návod ale dokumentuje jen `D`, a tato aplikace proto nic
