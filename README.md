@@ -13,7 +13,7 @@ displeji, bargraf 0–20, statistika, záznam a graf s mezemi.*
 
 | Přístroj | Převodník USB–RS-232 |
 |---|---|
-| ![Metex M-3650D v kufříku](docs/foto/pristroj-v-kufru.webp) | ![AXAGON ADS-1PQN s kabelem Metexu](docs/foto/prevodnik-zapojeny.webp) |
+| ![Metex M-3650D](docs/foto/multimetr.webp) | ![AXAGON ADS-1PQN s kabelem Metexu](docs/foto/prevodnik-zapojeny.webp) |
 
 ## Historie přístroje
 

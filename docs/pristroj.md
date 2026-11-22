@@ -1,12 +1,16 @@
 # Multimetr Metex M-3650D
 
-![Metex M-3650D v kufříku s kabelem RS-232 a návodem](foto/pristroj-v-kufru.webp)
+![Metex M-3650D](foto/multimetr.webp)
+
+*Metex M-3650D s připojenými měřicími šňůrami a kabelem RS-232 v boku.*
 
 Metex M-3650D je ruční číslicový multimetr řady **M-3600D** od korejské firmy
 METEX Corporation. Na trhu byl od poloviny 90. let a v Česku se prodával
 s českým návodem „Digitální multimetr s dvojitým displejem, řada M-3600D“.
 Stejný přístroj se prodával i pod značkou **Voltcraft M-3650D** (Conrad);
 pod tímto jménem ho uvádějí sigrok a QtDMM.
+
+![Přístroj v původním kufříku s měřicími šňůrami a kabelem MT/RS232C](foto/pristroj-v-kufru.webp)
 
 ![Obálka českého návodu](foto/manual-obalka.webp)
 
