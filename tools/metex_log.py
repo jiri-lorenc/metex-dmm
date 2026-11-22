@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-or-later
 """Řádkový logger Metex M-3650D (bez GUI) – např. pro dlouhé měření.
 
 Používá stejné jádro jako aplikace (metex_dmm.link / protocol / csvlog).

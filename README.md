@@ -327,4 +327,13 @@ nesouvisí. Názvy výrobků patří jejich vlastníkům.
 
 ## Licence
 
-Zatím neurčena.
+Projekt je open source a můžete ho volně používat, upravovat i šířit dál.
+Upravené verze ale musí zůstat otevřené pod stejnou licencí.
+
+- **Zdrojový kód** je pod licencí [GNU GPL verze 3](LICENSE).
+- **Dokumentace a fotky** jsou pod licencí
+  [CC BY-SA 4.0](docs/LICENSE.md). Uveďte autora a odkaz a úpravy šiřte
+  pod stejnou licencí.
+
+Český návod k přístroji je autorské dílo výrobce a prodejce, proto v repozitáři
+není. Dokumentace jeho obsah jen shrnuje vlastními slovy.

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
 """Statistiky měření: za celý běh (řadu) a v klouzavém časovém okně.
 
 Hodnoty se vedou v základních jednotkách SI (V, A, Ω, F, Hz), takže změna

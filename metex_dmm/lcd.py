@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
 """Kreslený „LCD“ displej ve stylu Metexu: sedmisegmentové číslice,
 symboly režimu, jednotka, bargraf 0–20 a malý vedlejší displej."""
 from __future__ import annotations

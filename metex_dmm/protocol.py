@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
 """Protokol multimetru Metex M-3650D (řada M-3600D), formát „metex14“.
 
 Linka: 1200 Bd, 7 datových bitů, bez parity, 2 stop bity. DTR=1 a RTS=0

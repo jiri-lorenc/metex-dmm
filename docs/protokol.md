@@ -92,7 +92,7 @@ posílá po každém platném rámci nebo po vypršení času.
 
 | zdroj | co potvrzuje |
 |---|---|
-| Návod k přístroji, str. 34–37 ([foto](foto/manual-str34.jpg)) | režimy, `D`, formát 14 znaků, 1200 Bd 7N2, zapojení kabelu |
+| Český návod k přístroji (řada M-3600D), str. 34–37; shrnutí v [navod-komunikace.md](navod-komunikace.md) | režimy, `D`, formát 14 znaků, 1200 Bd 7N2, zapojení kabelu |
 | [libsigrok `src/dmm/metex14.c`](https://github.com/sigrokproject/libsigrok/blob/master/src/dmm/metex14.c), záznam „Voltcraft M-3650D“ v `src/hardware/serial-dmm/api.c` | parametry linky, `D` bez CR, platnost rámce = CR na 14. místě, seznam režimů a jednotek, O.L |
 | [sigrok wiki: Voltcraft M-3650D](https://sigrok.org/wiki/Voltcraft_M-3650D) | 2000 bodů, funkce, podpora driverem serial-dmm |
 | [sigrok wiki: Device cables – Metex 5-pin RS232 cable](https://sigrok.org/wiki/Device_cables#Metex_5-pin_RS232_cable) | zapojení kabelu, DTR zapnuto, RTS vypnuto |

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
 """Testy sériové vrstvy proti náhradnímu portu (bez hardwaru)."""
 import threading
 import time

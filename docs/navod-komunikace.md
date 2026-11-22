@@ -1,11 +1,9 @@
 # Návod: použití přístroje s počítačem (str. 34–37)
 
 Vlastními slovy shrnuje kapitoly 6-12 a 6-13 českého návodu „Digitální
-multimetr s dvojitým displejem, řada M-3600D“. Fotky originálních stran:
-
-| [str. 34](foto/manual-str34.jpg) | [str. 35](foto/manual-str35.jpg) | [str. 36](foto/manual-str36.jpg) | [str. 37](foto/manual-str37.jpg) |
-|---|---|---|---|
-| ![str. 34](foto/manual-str34.jpg) | ![str. 35](foto/manual-str35.jpg) | ![str. 36](foto/manual-str36.jpg) | ![str. 37](foto/manual-str37.jpg) |
+multimetr s dvojitým displejem, řada M-3600D“. Originální strany návodu
+v repozitáři nejsou, protože návod je autorské dílo výrobce a prodejce.
+Odkazy „str. N“ míří na tištěný návod.
 
 ## 6-12 Použití přístroje s počítačem
 

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
 """Simulátor přístroje pro vyzkoušení aplikace bez hardwaru.
 
 Chová se jako otevřený sériový port: na bajt ``D`` po zhruba 0,3 s vrátí

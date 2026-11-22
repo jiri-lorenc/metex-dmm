@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
 """Hlavní okno aplikace: displej, graf, statistiky, záznam, alarmy."""
 from __future__ import annotations
 
@@ -779,7 +780,11 @@ class MainWindow(QMainWindow):
         QMessageBox.about(self, APP, f"""<h3>{APP} v počítači</h3>
 <p>Verze {__version__}. Čte multimetr Metex M-3650D (řada M-3600D) přes
 RS-232 (1200 Bd, 7N2). Do přístroje posílá pouze dotaz „D“, nic nenastavuje.</p>
-<p>Protokol ověřen podle návodu k přístroji, libsigrok (metex14) a QtDMM.</p>""")
+<p>Protokol ověřen podle návodu k přístroji, libsigrok (metex14) a QtDMM.</p>
+<p>© 2026 jiri-lorenc. Svobodný software pod licencí
+<a href="https://www.gnu.org/licenses/gpl-3.0.html">GNU GPL verze 3</a>:
+smíte ho šířit a upravovat za jejích podmínek. Je poskytován
+<b>bez jakékoli záruky</b>.</p>""")
 
     def closeEvent(self, ev) -> None:  # noqa: N802
         if self.logger:
